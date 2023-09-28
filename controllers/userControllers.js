@@ -37,12 +37,22 @@ exports.sendOTP = async (req, res) => {
     }
     const otp = generateRandomOTP();
 
-    // Save the OTP to the database (assuming you have an OTP model)
-    const newOTP = new otpModel({
-      phoneNumber,
-      otp,
-    });
-    await newOTP.save();
+    
+    const existingOTP = await otpModel.findOne({ phone_number:phoneNumber });
+
+    // If the email already exists, update the existing record with the new OTP
+    if (existingOTP) {
+      existingOTP.otp = otp;
+      existingOTP.created_on = new Date();
+      await existingOTP.save();
+    } else {
+      // If the email doesn't exist, create a new OTP record
+      const newOTP = new otpModel({
+        phone_number:phoneNumber,
+        otp,
+      });
+      await newOTP.save();
+    }
 
     // Send the OTP via SMS using Twilio
     await client.messages.create({
