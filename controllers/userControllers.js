@@ -15,6 +15,16 @@ const client = twilio(accountSid, authToken);
 exports.sendOTP = async (req, res) => {
   try {
     const { phoneNumber } = req.body;
+     
+
+     // if user already exist
+     const existing = await userModel.findOne({ phone_number:phoneNumber });
+     if (existing) {
+       res.status(400).json({
+         message: "User already exist !!..",
+       });
+       return;
+     }
 
     function generateRandomOTP(length = 6) {
       const digits = '0123456789';
@@ -53,10 +63,19 @@ exports.sendOTP = async (req, res) => {
 exports.signUp = async (req, res) => {
   try {
     const { name, email, phoneNumber, password, otp } = req.body;
-
+    
     // Check for missing fields
     if (!name || !email || !phoneNumber || !password || !otp) {
       res.status(400).json({ message: "Required fields are missing" });
+      return;
+    }
+
+    // if user already exist
+    const existing = await userModel.findOne({ email });
+    if (existing) {
+      res.status(400).json({
+        message: "User already exist !!..",
+      });
       return;
     }
 
