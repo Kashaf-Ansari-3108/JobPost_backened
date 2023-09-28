@@ -3,14 +3,14 @@ const jobModel = require("../models/jobSchema");
 exports.createJob = async (req,res) => {
   try {
     const { title, organization, location, type, experience, salary, description,userID } = await req.body;
-    const image = `http://localhost:5000/${req.body.image['name']}`;
+  
     // If fields are missing
-    if (!title || !organization || !location || !type || !experience || !salary || !image ||!description || !userID) {
+    if (!title || !organization || !location || !type || !experience || !salary ||!description || !userID) {
       res.status(400).json({ message: "Required fields are missing" });
       return;
     }
     // if job already exist
-    const existing = await jobModel.findOne({ title, organization, location, type, experience, salary, image, description });
+    const existing = await jobModel.findOne({ title, organization, location, type, experience, salary,description });
     if (existing) {
         res.status(400).json({
           message: "Job already exist !!..",
@@ -20,7 +20,7 @@ exports.createJob = async (req,res) => {
     
     // create job
     const job = new jobModel({
-      title, organization, location, type, experience, salary, description,image, userID
+      title, organization, location, type, experience, salary, description, userID
     });
       await job.save();
       res.status(200).json({

@@ -8,7 +8,6 @@ const jobSchema = new mongoose.Schema({
     experience:{type:String,required:true},
     salary:{type:String,required:true},
     description:{type:String,required:true},
-    image:{type:String,required:true},
     userID:{type:String,required:true},
     created_on: {type: Date,default: Date.now}
 });
