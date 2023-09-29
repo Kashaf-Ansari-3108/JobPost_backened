@@ -54,11 +54,12 @@ exports.sendOTP = async (req, res) => {
       await newOTP.save();
     }
 
-    // Send the OTP via SMS using Twilio
+    const otpToSend = await otpModel.findOne({ phone_number:phoneNumber });
+    //Send the OTP via SMS using Twilio
     await client.messages.create({
       to: phoneNumber,
       from: twilioPhoneNumber,
-      body: `Your OTP for registration in JobFinder is: ${otp}`,
+      body: `Your OTP for registration in JobFinder is: ${otpToSend.otp}`,
     });
 
     res.status(200).json({ message: "OTP sent successfully!" });
@@ -90,7 +91,7 @@ exports.signUp = async (req, res) => {
     }
 
     // Retrieve the OTP record from the database based on the phone number
-    const otpRecord = await otpModel.findOne({ phoneNumber });
+    const otpRecord = await otpModel.findOne({ phone_number:phoneNumber });
 
     function isValidOTPWithinTimeFrame(otpCreatedAt) {
       const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000); 
@@ -123,7 +124,7 @@ exports.signUp = async (req, res) => {
     await user.save();
 
     // Remove the OTP record from the database since it has been used
-    await otpModel.deleteOne({ phoneNumber });
+    await otpModel.deleteOne({ phone_number:phoneNumber });
 
     const token = await jwt.sign(req.body);
     res.status(200).json({
