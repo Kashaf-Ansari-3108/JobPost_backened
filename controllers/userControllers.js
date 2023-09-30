@@ -176,7 +176,7 @@ exports.login = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const {id} = req.params;
-    const user = await userModel.find({_id:id});
+    const user = await userModel.findOne({_id:id});
     res.status(200).json({
       message: "User retrieved succesfully !!..",
       data: user,

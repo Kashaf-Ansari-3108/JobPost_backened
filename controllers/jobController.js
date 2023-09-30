@@ -2,10 +2,10 @@ const jobModel = require("../models/jobSchema");
 
 exports.createJob = async (req,res) => {
   try {
-    const { title, organization, location, type, experience, salary, description,userID } = await req.body;
+    const { title, organization, location, type, experience, salary, description,email,userID } = await req.body;
   
     // If fields are missing
-    if (!title || !organization || !location || !type || !experience || !salary ||!description || !userID) {
+    if (!title || !organization || !location || !type || !experience || !salary ||!description ||!email|| !userID) {
       res.status(400).json({ message: "Required fields are missing" });
       return;
     }
@@ -20,7 +20,7 @@ exports.createJob = async (req,res) => {
     
     // create job
     const job = new jobModel({
-      title, organization, location, type, experience, salary, description, userID
+      title, organization, location, type, experience, salary, description,email, userID
     });
       await job.save();
       res.status(200).json({
